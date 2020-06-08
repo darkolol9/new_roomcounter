@@ -21,13 +21,19 @@ def hide_bar(root,b):
 	ylocstr = str(yloc-4)
 	root.overrideredirect(1)
 	root.geometry('+'+xlocstr+'+'+ylocstr)
-	b.pack_forget()
-	canvas.delete("all")
+	#b.pack_forget()
+	
 	mark_flag = True
-	countrooms(seconds,root,canvas)
+	
+	w = tk.Label(root, text='0',background ='black',fg='white',font='helvetica 8')
+	w.pack()
+	
+
+	root.wm_attributes("-transparentcolor", "yellow")
+	countrooms(seconds,root,canvas,w)
 
 
-def countrooms(seconds,root,canvas):
+def countrooms(seconds,root,canvas,w):
 	os.system('cls')
 
 	count =0
@@ -45,7 +51,7 @@ def countrooms(seconds,root,canvas):
 	img = cv2.cvtColor(formatted_scrnsht, cv2.COLOR_BGR2RGB)  
 
 	dst = cv2.addWeighted(img,1,img2,0.7,0)
-	cv2.imwrite('weigghted.png',dst)  #mask the screenshot
+	#cv2.imwrite('weigghted.png',dst)  #mask the screenshot
 	threshold = 0.994 #accuracy threshold 997 was working fine
 	
 
@@ -86,24 +92,25 @@ def countrooms(seconds,root,canvas):
 	#print(string)
 
 	w.config(text = string)
-	root.after(1000,countrooms,seconds,root,canvas)
+	root.after(1000,countrooms,seconds,root,canvas,w)
 
 
 
 
 root = tk.Tk()
 root.geometry("281x320")
-canvas = tk.Canvas(root,height=281,width = 281,bg = 'yellow')
-canvas.pack()
 
-root.wm_attributes("-transparentcolor", "yellow")
 
 root.overrideredirect(0)
 root.configure(background='black')
-w = tk.Label(root, text='0',background ='black',fg='white',font='helvetica 8')
-b = tk.Button(root,text='hide bar',command = lambda: hide_bar(root,b))
+
+canvas = tk.Canvas(root,height=281,width = 281,bg = 'yellow')
+canvas.delete("all")
+canvas.pack()
+
+b = tk.Button(root,text='find map',command = lambda: hide_bar(root,b))
 b.pack()
-w.pack()
+
 
 
 seconds = 0
