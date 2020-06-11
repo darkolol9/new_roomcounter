@@ -3,6 +3,8 @@ import numpy as np
 from PIL import ImageGrab
 import os
 import detectmap
+from sys import exit
+from datetime import datetime
 
 
 import tkinter as tk
@@ -10,8 +12,24 @@ import tkinter as tk
 img2 = cv2.imread('resources/newmask.png') #mask tool
 template = cv2.imread('resources/masked_3.png') #masked single room
 mark_flag = False
+count =0
 
 print('loaded resources successfully! begining to count rooms..\n')
+def capture():
+	xloc = root.winfo_x()
+	yloc = root.winfo_y()
+	
+	scrnshot = ImageGrab.grab(bbox = (xloc,yloc,xloc+282,yloc+285)) 
+	formatted_scrnsht = np.array(scrnshot)
+
+	img = cv2.cvtColor(formatted_scrnsht, cv2.COLOR_BGR2RGB) 
+	time = datetime.now().time()
+	time = str(time)[6:]
+
+	path = time+'.png'
+	cv2.imwrite('screenshots/'+path,img)
+	print(f'saved new file: {path}')
+
 
 def hide_bar(root,b):
 	map_loc = detectmap.find_map_loc()
@@ -24,8 +42,9 @@ def hide_bar(root,b):
 	#b.pack_forget()
 	
 	mark_flag = True
-	
-	w = tk.Label(root, text='0',background ='black',fg='white',font='helvetica 8')
+	text_cv = tk.Canvas(root,height=20,width = 281,bg = 'green')
+	text_cv.pack()
+	w = tk.Label(text_cv, text='0',background ='green',fg='white',font='helvetica 8')
 	w.pack()
 	
 
@@ -34,7 +53,7 @@ def hide_bar(root,b):
 
 
 def countrooms(seconds,root,canvas,w):
-	os.system('cls')
+	
 
 	count =0
 	xloc = root.winfo_x()
@@ -44,7 +63,7 @@ def countrooms(seconds,root,canvas,w):
 	
 	scrnshot = ImageGrab.grab(bbox = (xloc,yloc,xloc+282,yloc+282)) #first screenshot of map
 	
-	print('updated:   + ' ,xloc,' ',yloc, ' \n')
+	
 
 	formatted_scrnsht = np.array(scrnshot)
 
@@ -98,17 +117,22 @@ def countrooms(seconds,root,canvas,w):
 
 
 root = tk.Tk()
-root.geometry("281x320")
+root.geometry("281x330")
+root.title('room counter')
 
 
 root.overrideredirect(0)
-root.configure(background='black')
+root.configure(background='green')
 
 canvas = tk.Canvas(root,height=281,width = 281,bg = 'yellow')
 canvas.delete("all")
 canvas.pack()
 
 b = tk.Button(root,text='find map',command = lambda: hide_bar(root,b))
+exit_b = tk.Button(root,text='exit',command=exit)
+exit_b.place(x=0,y=284)
+capture_b = tk.Button(root,text='save',command=capture)
+capture_b.place(x=250,y=284)
 b.pack()
 
 
