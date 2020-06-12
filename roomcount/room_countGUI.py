@@ -9,8 +9,8 @@ from datetime import datetime
 
 import tkinter as tk
 
-img2 = cv2.imread('resources/newmask.png') #mask tool
-template = cv2.imread('resources/masked_3.png') #masked single room
+img2 = cv2.imread('resources/newmask_1.png') #mask tool
+template = cv2.imread('resources/masked_4.png') #masked single room
 mark_flag = False
 count =0
 
@@ -61,17 +61,18 @@ def countrooms(seconds,root,canvas,w):
 	
 	
 	
-	scrnshot = ImageGrab.grab(bbox = (xloc,yloc,xloc+282,yloc+282)) #first screenshot of map
+	scrnshot = ImageGrab.grab(bbox = (xloc,yloc+1,xloc+282,yloc+283)) #first screenshot of map
 	
 	
 
 	formatted_scrnsht = np.array(scrnshot)
 
 	img = cv2.cvtColor(formatted_scrnsht, cv2.COLOR_BGR2RGB)  
+	cv2.imwrite('scrn.png',img)
 
-	dst = cv2.addWeighted(img,1,img2,0.7,0)
-	#cv2.imwrite('weigghted.png',dst)  #mask the screenshot
-	threshold = 0.994 #accuracy threshold 997 was working fine
+	dst = cv2.addWeighted(img,1,img2,0.7,0) #0.7
+	cv2.imwrite('weigghted.png',dst)  #mask the screenshot
+	threshold = 0.998 #accuracy threshold 997 was working fine
 	
 
 	res = cv2.matchTemplate(dst,template,cv2.TM_CCORR_NORMED) #find the matches
@@ -79,7 +80,7 @@ def countrooms(seconds,root,canvas,w):
 
 	for pt in zip(*loc[::-1]): #count
 		count = count + 1
-		canvas.create_rectangle(pt[0]-4,pt[1]-3,pt[0]+22,pt[1]+22,outline='red')
+		canvas.create_rectangle(pt[0]-8,pt[1]-6,pt[0]+16,pt[1]+16,outline='red')
 	
 	
 
