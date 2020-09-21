@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['room_countGUI.py'],
-             pathex=['C:\\Users\\admin\\Desktop\\roomcount'],
+             pathex=['C:\\Users\\admin\\Documents\\GitHub\\new_roomcounter\\roomcount'],
              binaries=[],
              datas=[],
              hiddenimports=[],
