@@ -42,9 +42,9 @@ def hide_bar(root,b):
 	#b.pack_forget()
 	
 	mark_flag = True
-	text_cv = tk.Canvas(root,height=20,width = 281,bg = 'green')
+	text_cv = tk.Canvas(root,height=20,width = 281,bg = 'grey')
 	text_cv.pack()
-	w = tk.Label(text_cv, text='0',background ='green',fg='white',font='helvetica 8')
+	w = tk.Label(text_cv, text='0',background ='gray',fg='white',font='helvetica 8')
 	w.pack()
 	
 
@@ -59,12 +59,8 @@ def countrooms(seconds,root,canvas,w):
 	xloc = root.winfo_x()
 	yloc = root.winfo_y()
 	
-	
-	
 	scrnshot = ImageGrab.grab(bbox = (xloc,yloc+1,xloc+282,yloc+283)) #first screenshot of map
 	
-	
-
 	formatted_scrnsht = np.array(scrnshot)
 
 	img = cv2.cvtColor(formatted_scrnsht, cv2.COLOR_BGR2RGB)  
@@ -73,7 +69,6 @@ def countrooms(seconds,root,canvas,w):
 	dst = cv2.addWeighted(img,1,img2,0.7,0) #0.7
 	cv2.imwrite('weigghted.png',dst)  #mask the screenshot
 	threshold = 0.998 #accuracy threshold 997 was working fine
-	
 
 	res = cv2.matchTemplate(dst,template,cv2.TM_CCORR_NORMED) #find the matches
 	loc = np.where(res >= threshold)
@@ -81,14 +76,15 @@ def countrooms(seconds,root,canvas,w):
 	for pt in zip(*loc[::-1]): #count
 		count = count + 1
 		canvas.create_rectangle(pt[0]-8,pt[1]-6,pt[0]+16,pt[1]+16,outline='red')
-	
-	
 
 	if count == 0:
 		seconds = 0 
 		canvas.delete("all")
 	else:
-		seconds = seconds + 1
+		try:
+			seconds = detectmap.find_time()
+		except:
+			seconds = 1
 
 	rpm =0
 
@@ -108,7 +104,7 @@ def countrooms(seconds,root,canvas,w):
 	roomsleft1 = str(64 - count)
 	roomsleft2 = str(50-count)	
 
-	string = 'Rooms open: ' + str(count) + ' RPM: '  +  rpm_string + " (estimated end time: " + estimated_time + ")" 
+	string = 'Rooms open: ' + str(count) + '| RPM: '  +  rpm_string + "| (estimated end time: " + estimated_time + ")" 
 	#print(string)
 
 	w.config(text = string)
@@ -123,7 +119,7 @@ root.title('room counter')
 
 
 root.overrideredirect(0)
-root.configure(background='green')
+root.configure(background='grey')
 
 canvas = tk.Canvas(root,height=281,width = 281,bg = 'yellow')
 canvas.delete("all")
